@@ -16,7 +16,7 @@ jobs:
           dod_content=$(cat "$dod_file")
 
           # Get the PR description
-          pr_description=$(curl -sSL -H "Authorization: token ${{ secrets.TEST_GITHUB }}" \
+          pr_description=$(curl -sSL -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" \
             | jq -r .body)
 
@@ -28,4 +28,4 @@ jobs:
             fi
           done
         env:
-          GITHUB_TOKEN: ${{ secrets.TEST_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
