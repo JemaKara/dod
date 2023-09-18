@@ -1,11 +1,6 @@
 public class Test {
 
     //comment
-
-//
-//
-//
-//
 }
 
 
