@@ -1,15 +1,31 @@
 name: Definition of Done
 on:
   pull_request:
-    types: [opened, edited]
+    types: [opened, synchronize]  # Listen for new PRs and PR updates
 
 jobs:
   check-dod:
     runs-on: ubuntu-latest
     steps:
-
       - name: Check DoD
         uses: actions/checkout@v2
-        with:
-          dod_yaml: 'dod.yaml'
-          git_token: ${{ secrets.test_github }}
+      - name: Check PR against DoD
+        run: |
+          # Read the DoD file
+          dod_file="dod.yaml"
+          dod_content=$(cat "$dod_file")
+
+          # Get the PR description
+          pr_description=$(curl -sSL -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" \
+            | jq -r .body)
+
+          # Check if all DoD checkpoints are in the PR description
+          for checkpoint in $dod_content; do
+            if ! echo "$pr_description" | grep -q "$checkpoint"; then
+              echo "Missing DoD checkpoint: $checkpoint"
+              exit 1
+            fi
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.TEST_GITHUB }}
