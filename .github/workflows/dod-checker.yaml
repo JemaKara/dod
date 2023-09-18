@@ -1,0 +1,15 @@
+name: Definition of Done
+on:
+  pull_request:
+    types: [opened, edited]
+
+jobs:
+  check-dod:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check DoD
+        uses: actions/checkout@v2
+        with:
+          dod_yaml: 'dod.yaml'
+          git_token: ${{ secrets.test_github }}
