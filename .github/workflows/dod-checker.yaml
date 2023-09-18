@@ -1,7 +1,7 @@
 name: Definition of Done
 on:
   pull_request:
-    types: [opened, synchronize]  # Listen for new PRs and PR updates
+    types: [opened, synchronize]
 
 jobs:
   check-dod:
@@ -11,9 +11,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Check PR against DoD
         run: |
-          # Read the DoD file
+          # Read the DoD file and store checkpoints in an array
           dod_file="dod.yaml"
-          dod_content=$(cat "$dod_file")
+          mapfile -t dod_checkpoints < <(yq eval '.dod[]' "$dod_file")
 
           # Get the PR description
           pr_description=$(curl -sSL -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
@@ -21,7 +21,7 @@ jobs:
             | jq -r .body)
 
           # Check if all DoD checkpoints are in the PR description
-          for checkpoint in $dod_content; do
+          for checkpoint in "${dod_checkpoints[@]}"; do
             if ! echo "$pr_description" | grep -q "$checkpoint"; then
               echo "Missing DoD checkpoint: $checkpoint"
               exit 1
