@@ -11,7 +11,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Definition of Done (DoD) checker
         uses: platisd/definition-of-done@v2.0.0
-
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INPUT_DOD_YAML: ./dod.yaml
+        with:
+          dod_yaml: 'dod.yaml'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
